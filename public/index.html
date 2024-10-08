@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vaccine Effectiveness Browser</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz@0,14..32;1,14..32&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+        margin: 0;
+        background: aliceblue;
+        padding: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+      }
+      input {
+        font-family: inherit;
+        padding: 10px;
+        margin-bottom: 10px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      button {
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        width: 100%;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .result {
+        margin-top: 20px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Vaccine Effectiveness Browser</h2>
+      <label for="vaccinatedCases"
+        >Number of COVID-19 Cases in Vaccinated Group</label
+      >
+      <input
+        type="number"
+        id="vaccinatedCases"
+        placeholder="Vaccinated Cases"
+        required
+      />
+
+      <label for="unvaccinatedCases"
+        >Number of COVID-19 Cases in Unvaccinated Group</label
+      >
+      <input
+        type="number"
+        id="unvaccinatedCases"
+        placeholder="Unvaccinated Cases"
+        required
+      />
+
+      <label for="vaccinatedPopulation">Total Vaccinated Population</label>
+      <input
+        type="number"
+        id="vaccinatedPopulation"
+        placeholder="Vaccinated Population"
+        required
+      />
+
+      <label for="unvaccinatedPopulation">Total Unvaccinated Population</label>
+      <input
+        type="number"
+        id="unvaccinatedPopulation"
+        placeholder="Unvaccinated Population"
+        required
+      />
+
+      <button onclick="calculateEffectiveness()">
+        Calculate Vaccine Effectiveness
+      </button>
+
+      <div class="result" id="result"></div>
+    </div>
+
+    <script>
+      function calculateEffectiveness() {
+        const vaccinatedCases =
+          document.getElementById("vaccinatedCases").value;
+        const unvaccinatedCases =
+          document.getElementById("unvaccinatedCases").value;
+        const vaccinatedPopulation = document.getElementById(
+          "vaccinatedPopulation"
+        ).value;
+        const unvaccinatedPopulation = document.getElementById(
+          "unvaccinatedPopulation"
+        ).value;
+
+        const data = {
+          vaccinatedCases: Number(vaccinatedCases),
+          unvaccinatedCases: Number(unvaccinatedCases),
+          vaccinatedPopulation: Number(vaccinatedPopulation),
+          unvaccinatedPopulation: Number(unvaccinatedPopulation),
+        };
+
+        fetch("/calculate-effectiveness", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            document.getElementById(
+              "result"
+            ).innerText = `Vaccine Effectiveness: ${result.effectiveness}%`;
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+    </script>
+  </body>
+</html>
